@@ -33,7 +33,7 @@ void MainWindow::start()
     m_bytesReceived = 0;
 
     QHostAddress ipAddress(m_ipAddress.toInt());
-    if(!m_tcpClient.listen(ipAddress,6666))
+    if(!m_tcpClient.listen(ipAddress, 6666))
     {
         qDebug() << m_tcpClient.errorString();
         close();
