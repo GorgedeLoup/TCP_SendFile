@@ -16,7 +16,8 @@ MainWindow::MainWindow(QWidget *parent) :
     m_ipAddress = getLocalIP();
     qDebug() << "IP Address:" << m_ipAddress;
 
-    connect(&m_tcpClient, SIGNAL(newConnection()) ,this, SLOT(acceptConnection()));    // Send newConnection() signal when a new connection is detected
+    connect(&m_tcpClient, SIGNAL(newConnection()) ,
+            this, SLOT(acceptConnection()));    // Send newConnection() signal when a new connection is detected
 }
 
 
@@ -39,6 +40,7 @@ void MainWindow::start()
         close();
         return;
     }
+    qDebug() << "Listen OK";
     ui->u_clientStatusLabel->setText(tr("Listen"));
 }
 
@@ -51,6 +53,7 @@ void MainWindow::acceptConnection()
     connect(m_tcpClientConnection, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(displayError(QAbstractSocket::SocketError)));
 
     ui->u_clientStatusLabel->setText(tr("Accept new connection"));
+    qDebug() << "AcceptConnection OK";
     m_tcpClient.close();
 }
 
@@ -62,11 +65,15 @@ void MainWindow::updateClientProgress()
     in.setVersion(QDataStream::Qt_4_6);
     if(m_bytesReceived <= sizeof(qint64)*2)
     {
+        qDebug() << "m_bytesReceived:" << m_bytesReceived;
+        qDebug() << "bytesAvailable:" << m_tcpClientConnection->bytesAvailable()
+                 << endl << "fileNameSize:" << m_fileNameSize;
         // If received data length is less than 16 bytes, then it has just started, save incoming head information
         if((m_tcpClientConnection->bytesAvailable() >= sizeof(qint64)*2) && (m_fileNameSize == 0))
         {
             // Receive the total data length and the length of filename
             in >> m_totalBytes >> m_fileNameSize;
+            qDebug() << "m_totalBytes:" << m_totalBytes << endl << "m_fileNameSize:" << m_fileNameSize;
             m_bytesReceived += sizeof(qint64) * 2;
         }
         if((m_tcpClientConnection->bytesAvailable() >= m_fileNameSize) && (m_fileNameSize != 0))
@@ -77,6 +84,8 @@ void MainWindow::updateClientProgress()
 
             m_bytesReceived += m_fileNameSize;
             m_localFile = new QFile(m_fileName);
+            qDebug() << "m_fileName:" << m_fileName << endl <<
+                        "****************" << endl << "****************";
             if(!m_localFile->open(QFile::WriteOnly))
             {
                 qDebug() << "Open file error !";
@@ -100,7 +109,7 @@ void MainWindow::updateClientProgress()
 // Update progress bar
     if(m_bytesReceived == m_totalBytes)
     {
-        // When receiving process is don
+        // When receiving process is done
         m_tcpClientConnection->close();
         m_localFile->close();
         ui->u_startButton->setEnabled(true);
@@ -113,7 +122,7 @@ void MainWindow::updateClientProgress()
 void MainWindow::displayError(QAbstractSocket::SocketError)
 {
     qDebug() << m_tcpClientConnection->errorString();
-    m_tcpClientConnection->close();
+   m_tcpClientConnection->close();
 
     ui->u_clientProgressBar->reset();
     ui->u_clientStatusLabel->setText(tr("Client is ready"));
@@ -128,7 +137,8 @@ QString ipAddress;
     QList<QHostAddress> ipAddressesList = QNetworkInterface::allAddresses();
     for (int i = 0; i < ipAddressesList.size(); ++i) {
         if (ipAddressesList.at(i) != QHostAddress::LocalHost &&
-            ipAddressesList.at(i).toIPv4Address()) {
+            ipAddressesList.at(i).toIPv4Address() &&
+            (ipAddressesList.at(i).toString().indexOf("192") != (-1))) {
             ipAddress = ipAddressesList.at(i).toString();
             break;
         }

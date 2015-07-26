@@ -65,12 +65,14 @@ void MainWindow::startTransfer()
         qDebug() << "Open file error !";
         return;
     }
+    qDebug() << "m_fileName:" << m_fileName;
     m_totalBytes = m_localFile->size();    // Total bytes of the file
 
     QDataStream m_sendOut(&m_outBlock, QIODevice::WriteOnly);
     m_sendOut.setVersion(QDataStream::Qt_4_6);
     QString currentFileName = m_fileName.right(m_fileName.size() - m_fileName.lastIndexOf('/')-1);
     m_sendOut << qint64(0) << qint64(0) << currentFileName;
+    qDebug() << "currentFileName:" << currentFileName;
 // Write total bytes space, filename space, filename in order
     m_totalBytes += m_outBlock.size();
 // m_totalBytes is the bytes information of filename space and the actual bytes of the file

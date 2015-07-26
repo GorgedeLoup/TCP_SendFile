@@ -85,6 +85,12 @@
      <height>23</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuClient">
+    <property name="title">
+     <string>Client</string>
+    </property>
+   </widget>
+   <addaction name="menuClient"/>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>

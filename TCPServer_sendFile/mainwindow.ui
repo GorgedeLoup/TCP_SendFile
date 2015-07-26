@@ -36,6 +36,9 @@
       <height>20</height>
      </rect>
     </property>
+    <property name="text">
+     <string>192.168.1.100</string>
+    </property>
    </widget>
    <widget class="QLabel" name="u_portLabel">
     <property name="geometry">
@@ -58,6 +61,9 @@
       <width>113</width>
       <height>20</height>
      </rect>
+    </property>
+    <property name="text">
+     <string>6666</string>
     </property>
    </widget>
    <widget class="QProgressBar" name="u_serverProgressBar">
@@ -135,6 +141,12 @@
      <height>23</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuServer">
+    <property name="title">
+     <string>Server</string>
+    </property>
+   </widget>
+   <addaction name="menuServer"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
